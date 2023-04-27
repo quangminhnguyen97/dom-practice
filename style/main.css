@@ -33,3 +33,8 @@ h {
   display: flex;
   align-items: center
 }
+
+.search-box {
+  margin: auto;
+  width: 50%;
+}
