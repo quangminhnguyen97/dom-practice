@@ -24,7 +24,24 @@ function initSearchInput() {
   })
 }
 
+function filterTodo(status) {
+  const liList = getAllLiElement();
+
+  for (const li of liList) {
+    const needToShow = li.dataset.status === 'all' || li.dataset.status === status;
+    li.hidden = !needToShow
+  }
+}
+
+function initFilterTodo() {
+  const selectFilter = document.querySelector('#selectFilter')
+  selectFilter.addEventListener('change', () => {
+    filterTodo(selectFilter.value)
+  })
+}
+
 // MAIN
 (() => {
   initSearchInput()
+  initFilterTodo()
 })()
