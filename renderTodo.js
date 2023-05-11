@@ -1,3 +1,21 @@
+function isMatchStatus(liElement, filterStatus) {
+  return filterStatus === 'all' || liElement.dataset.status === filterStatus
+}
+
+function isMatchSearch(liElement, searchTerm) {
+  if (searchTerm === '') return true
+  const originalContent = liElement.querySelector('.todo__title')
+  if (!originalContent) return false
+  return originalContent.textContent.toLowerCase().includes(searchTerm?.toLowerCase())
+}
+
+function isMatch(liElement, params) {
+  return (
+    isMatchSearch(liElement, params.get('searchTerm')) &&
+    isMatchStatus(liElement, params.get('status'))
+  )
+}
+
 function getTodoList() {
   try {
     return JSON.parse(localStorage.getItem('todo_list')) || []
@@ -6,7 +24,7 @@ function getTodoList() {
   }
 }
 
-function createTodoElement(todo) {
+function createTodoElement(todo, params) {
   if (!todo) return null;
   // find template
   const templateTodo = document.getElementById('todoTemplate');
@@ -29,6 +47,7 @@ function createTodoElement(todo) {
   const titleElement = todoElement.querySelector('.todo__title')
   if (titleElement) titleElement.textContent = todo.title
 
+  todoElement.hidden = !isMatch(todoElement, params)
   // Attach event handlers
   // Finish Event
   const finishEventElement = todoElement.querySelector('button.mark-as-done')
@@ -118,12 +137,12 @@ function populateTodoForm(todo) {
 
 }
 
-function renderTodoList(todoList, ulElementId) {
+function renderTodoList(todoList, ulElementId, params) {
   const liList = document.getElementById(ulElementId)
 
   if (liList) {
     for (let todo of todoList) {
-      const liElement = createTodoElement(todo)
+      const liElement = createTodoElement(todo, params)
       liList.appendChild(liElement)
     }
   }
@@ -199,8 +218,10 @@ function handleTodoFormSubmit(e) {
   //   {id: 3, title: 'Learn NextJS', status: 'pending'},
   // ];
   // localStorage.setItem('todo_list', JSON.stringify(todoList))
+  const params = new URLSearchParams(window.location.search)
+
   const todoList = getTodoList()
-  renderTodoList(todoList, 'listView');
+  renderTodoList(todoList, 'listView', params);
 
   const formSubmit = document.querySelector('#todoForm')
   if (formSubmit) {

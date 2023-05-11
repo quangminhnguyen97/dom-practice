@@ -2,46 +2,61 @@ function getAllLiElement() {
   return document.querySelectorAll('ul#listView > li')
 }
 
-function isMatch(liElement, searchTerm) {
+function isMatchStatus(liElement, filterStatus) {
+  return filterStatus === 'all' || liElement.dataset.status === filterStatus
+}
+
+function isMatchSearch(liElement, searchTerm) {
   if (searchTerm === '') return true
   const originalContent = liElement.querySelector('.todo__title').textContent
   return originalContent.toLowerCase().includes(searchTerm)
 }
 
-function searchTodo(searchTerm) {
-  const liList = getAllLiElement();
 
-  for (const li of liList) {
-    const needToShow = isMatch(li, searchTerm)
-    li.hidden = !needToShow
-  }
+function isMatch(liElement, params) {
+  return (isMatchSearch(liElement, params.get('searchTerm')) && isMatchStatus(liElement, params.get('status')))
 }
 
-function initSearchInput() {
-  const inputType = document.querySelector('#searchTodo')
-  inputType.addEventListener('input', (e) => {
-    searchTodo(e.target.value)
+function initSearchInput(searchParams) {
+  const searchInput = document.querySelector('#searchTodo')
+  if (searchParams.get('searchTerm')) {
+    searchInput.value = searchParams.get('searchTerm')
+  }
+
+  searchInput.addEventListener('input', () => {
+    handleFilterChange('searchTerm', searchInput.value)
   })
 }
 
-function filterTodo(status) {
+function handleFilterChange(filterName, filterValue) {
+  const url = new URL(window.location);
+  url.searchParams.set(filterName, filterValue);
+  history.pushState({}, "", url);
+
   const liList = getAllLiElement();
 
   for (const li of liList) {
-    const needToShow = li.dataset.status === 'all' || li.dataset.status === status;
+    const needToShow = isMatch(li, url.searchParams)
     li.hidden = !needToShow
   }
 }
 
-function initFilterTodo() {
+function initFilterTodo(searchParams) {
   const selectFilter = document.querySelector('#selectFilter')
+
+  if (searchParams.get('status')) {
+    selectFilter.value = searchParams.get('status')
+  }
+
   selectFilter.addEventListener('change', () => {
-    filterTodo(selectFilter.value)
+    handleFilterChange('status', selectFilter.value)
   })
 }
 
 // MAIN
 (() => {
-  initSearchInput()
-  initFilterTodo()
+  const searchParams = new URLSearchParams(window.location.search);
+
+  initSearchInput(searchParams)
+  initFilterTodo(searchParams)
 })()

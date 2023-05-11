@@ -16,7 +16,7 @@
 		<title>Dom Practice</title>
 	</head>
 	<body>
-		<a href="">
+		<a href="" onclick="goHome()">
 			<h1 id="title" style="text-align: center">
 				Todo list
 				<img src="assets/images/list.svg" alt="" />
@@ -93,5 +93,13 @@
 			integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
 			crossorigin="anonymous"
 		></script>
+		<script>
+			function goHome() {
+				const url = new URL(window.location);
+				url.searchParams.set('status', 'all');
+				url.searchParams.set('searchTerm', '');
+				history.pushState({}, '', url);
+			}
+		</script>
 	</body>
 </html>
