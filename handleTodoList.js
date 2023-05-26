@@ -9,7 +9,7 @@ function isMatchStatus(liElement, filterStatus) {
 function isMatchSearch(liElement, searchTerm) {
   if (searchTerm === '') return true
   const originalContent = liElement.querySelector('.todo__title')
-  return originalContent.textContent.toLowerCase().includes(searchTerm.toLowerCase())
+  return originalContent?.textContent?.toLowerCase().includes(searchTerm?.toLowerCase())
 }
 
 
