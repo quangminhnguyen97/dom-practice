@@ -14,6 +14,7 @@ function isMatchSearch(liElement, searchTerm) {
 
 
 function isMatch(liElement, params) {
+  if (!params) return
   return (isMatchSearch(liElement, params.get('searchTerm')) && isMatchStatus(liElement, params.get('status')))
 }
 
