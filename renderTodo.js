@@ -10,8 +10,6 @@ function isMatchSearch(liElement, searchTerm) {
 }
 
 function isMatch(liElement, params) {
-  if (!params) return
-  console.log({ c1: isMatchSearch(liElement, params.get('searchTerm')), c2: isMatchStatus(liElement, params.get('status')) });
   return (
     isMatchSearch(liElement, params.get('searchTerm')) &&
     isMatchStatus(liElement, params.get('status'))
@@ -48,7 +46,7 @@ function createTodoElement(todo, params) {
   // update content when needed
   const titleElement = todoElement.querySelector('.todo__title')
   if (titleElement) titleElement.textContent = todo.title
-  todoElement.hidden = !isMatch(todoElement, params)
+  todoElement.hidden = !(isMatch(todoElement, params) === undefined ? true : isMatch(todoElement, params))
   // Attach event handlers
   // Finish Event
   const finishEventElement = todoElement.querySelector('button.mark-as-done')
